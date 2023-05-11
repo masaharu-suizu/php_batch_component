@@ -1,0 +1,17 @@
+{
+    "require": {
+        "symfony/console": "^6.2",
+        "symfony/event-dispatcher": "^6.2",
+        "symfony/yaml": "^6.2",
+        "monolog/monolog": "^3.3",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\" : "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.2"
+    }
+}

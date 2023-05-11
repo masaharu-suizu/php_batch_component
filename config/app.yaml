@@ -1,0 +1,16 @@
+logger:
+  name: myapp
+  # 100(Debug), 200(Info), 250(Notice), 300(Warning), 400(Error), 500(Critical), 550(Alert), 600(Emergency)
+  level: 200
+
+commands:
+  - App\Command\SampleCommand
+
+databases:
+  master:
+    host: localhost
+    port: 3301
+    dbname: dummy
+    charset: utf8mb4
+    user: dummy
+    password: dummy

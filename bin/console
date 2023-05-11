@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+require __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Event\{ConsoleCommandEvent, ConsoleErrorEvent, ConsoleTerminateEvent};
+use Symfony\Component\Console\{Application, Command\Command, ConsoleEvents};
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Yaml\Yaml;
+use App\MyLogger;
+
+$application = new Application('console', '0.1');
+$dispatcher = new EventDispatcher();
+
+$dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+
+});
+$dispatcher->addListener(ConsoleEvents::ERROR, function (ConsoleErrorEvent $event) {
+    $message = $event->getError()->getMessage();
+    MyLogger::logger()->error($message);
+    return Command::FAILURE;
+});
+$dispatcher->addListener(ConsoleEvents::TERMINATE, function () {
+    $message = sprintf(
+        'Memory peak usage: %dMB (memory_limit: %sB)',
+        memory_get_peak_usage(true) / 1024 / 1024,
+        ini_get('memory_limit')
+    );
+    MyLogger::logger()->info($message);
+
+    $message = sprintf(
+        'Performance %fsec',
+        microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]);
+    MyLogger::logger()->info($message);
+});
+
+$application->setDispatcher($dispatcher);
+
+// Add command to application
+$commandList = Yaml::parseFile(__DIR__.'/../config/app.yaml');
+foreach ($commandList['commands'] as $command) {
+    $application->add(new $command);
+}
+$application->run();
